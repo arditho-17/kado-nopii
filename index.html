@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spesial Untuk Nopi ✦ dari Dito</title>
+  
+  <!-- Font & CDNs -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #1d132b 0%, #0c0914 80%, #07050c 100%);
+      color: #fff6e6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Background Canvas Bintang */
+    #stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Layer Animasi Melayang */
+    #frLayer, #petals {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+    #frLayer span, #petals span {
+      position: absolute;
+      bottom: -30px;
+      animation: floatItem linear infinite;
+      color: #f2a6a6;
+      opacity: 0.6;
+    }
+    @keyframes floatItem {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.8; }
+      100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Burung Origami */
+    #bird {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 70px;
+      height: 60px;
+      pointer-events: none;
+      z-index: 90;
+      opacity: 0;
+    }
+
+    /* Navigation Dots */
+    #dots {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    #dots i {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      position: relative;
+    }
+    /* Memperluas area sentuh/klik di HP & laptop */
+    #dots i::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+    }
+    #dots i:hover {
+      background: rgba(242, 166, 166, 0.7);
+      transform: scale(1.25);
+    }
+    #dots i.on {
+      background: rgba(242, 166, 166, 0.65);
+      box-shadow: 0 0 8px rgba(242, 166, 166, 0.5);
+    }
+    #dots i.current {
+      width: 22px;
+      border-radius: 10px;
+      background: #f2a6a6;
+      box-shadow: 0 0 12px #f2a6a6;
+      transform: scale(1.08);
+    }
+
+    /* Main Container Stages */
+    .app {
+      position: relative;
+      z-index: 10;
+      width: 92%;
+      max-width: 480px;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0 60px;
+    }
+
+    .stage {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+    }
+    .stage.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Typography */
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: #fff6e6;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 14px rgba(242, 166, 166, 0.25);
+    }
+    h1 { font-size: 1.85rem; }
+    h2 { font-size: 1.5rem; }
+    p {
+      color: rgba(255, 246, 230, 0.85);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Badge & Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(242, 166, 166, 0.12);
+      border: 1px solid rgba(242, 166, 166, 0.25);
+      color: #f2a6a6;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, #f2a6a6 0%, #e98a9b 100%);
+      color: #20111a;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      padding: 13px 28px;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(242, 166, 166, 0.35);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(242, 166, 166, 0.45);
+    }
+    .btn:active {
+      transform: translateY(1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff6e6;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: none;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+    .hid { display: none !important; }
+
+    /* ================= TAHAP 1 ================= */
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+      margin: 24px 0;
+    }
+    .count-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 14px 6px;
+      backdrop-filter: blur(8px);
+    }
+    .count-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #f2a6a6;
+      display: block;
+    }
+    .count-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 246, 230, 0.6);
+      margin-top: 4px;
+      display: block;
+    }
+    .gift-btn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f2a6a6 0%, #d87285 100%);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.3rem;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(242, 166, 166, 0.45);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      margin: 20px auto 10px;
+    }
+    .gift-btn:hover {
+      transform: scale(1.08) rotate(5deg);
+    }
+    .gift-btn.locked {
+      background: radial-gradient(circle, #443c53 0%, #2a2238 100%);
+      box-shadow: none;
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+
+    /* ================= TAHAP 2 ================= */
+    #prism {
+      width: 260px;
+      height: 260px;
+      cursor: pointer;
+      margin: 15px auto;
+      outline: none;
+      position: relative;
+    }
+    .tracks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin: 15px 0;
+    }
+    .track {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: #fff6e6;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .track.on {
+      background: rgba(242, 166, 166, 0.2);
+      border-color: #f2a6a6;
+      color: #f2a6a6;
+      font-weight: 600;
+      transform: translateX(5px);
+    }
+    #mp {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(242, 166, 166, 0.25);
+      border-radius: 14px;
+      padding: 10px 16px;
+      margin-top: 10px;
+    }
+    #mp.show { display: flex; }
+    .mp-ctrls { display: flex; gap: 8px; }
+    .mp-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #fff6e6;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+    .hint-text {
+      color: #e6c594;
+      font-size: 0.88rem;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* Floating Music Button (Pojok Kanan Bawah) */
+    #floatMusic {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(26, 18, 36, 0.85);
+      border: 1px solid rgba(242, 166, 166, 0.35);
+      backdrop-filter: blur(12px);
+      padding: 8px 14px 8px 10px;
+      border-radius: 30px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45), 0 0 15px rgba(242, 166, 166, 0.2);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      user-select: none;
+      max-width: 260px;
+    }
+    #floatMusic:hover {
+      transform: translateY(-3px) scale(1.03);
+      border-color: #f2a6a6;
+      box-shadow: 0 12px 30px rgba(242, 166, 166, 0.35);
+    }
+    #floatMusicBtn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f2a6a6 0%, #e98a9b 100%);
+      border: none;
+      color: #20111a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(242, 166, 166, 0.4);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    #floatMusic:hover #floatMusicBtn {
+      transform: scale(1.08);
+    }
+    #floatMusicTitle {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff6e6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+    #floatMusic.playing #floatMusicBtn {
+      animation: pulseGlow 1.8s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px rgba(242, 166, 166, 0.4); }
+      100% { box-shadow: 0 0 20px rgba(242, 166, 166, 0.85); }
+    }
+
+    /* ================= TAHAP 3 & LIGHTBOX ================= */
+    .envelope-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(242, 166, 166, 0.2);
+      border-radius: 20px;
+      padding: 30px 20px;
+      width: 100%;
+      margin: 20px 0;
+      backdrop-filter: blur(10px);
+    }
+    #lb, #hl {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 6, 14, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #lb.open, #hl.open { display: flex; }
+    .lb-card {
+      background: #181224;
+      border: 1px solid rgba(242, 166, 166, 0.3);
+      border-radius: 22px;
+      padding: 28px 24px;
+      max-width: 440px;
+      width: 100%;
+      color: #fff6e6;
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      text-align: left;
+    }
+    .lb-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff6e6;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .lp {
+      display: block;
+      margin-bottom: 14px;
+      line-height: 1.7;
+      font-size: 0.96rem;
+      color: rgba(255, 246, 230, 0.9);
+    }
+    .lp.sign {
+      text-align: right;
+      color: #e6c594;
+      font-weight: 700;
+      margin-top: 20px;
+      font-family: 'Playfair Display', serif;
+    }
+    #lbm img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* Modal Hati (Bento Tile Spesial) */
+    .heart-modal-box {
+      width: 270px;
+      height: 270px;
+      background: radial-gradient(circle, #f2a6a6 20%, #d87285 100%);
+      clip-path: path("M135,250 C135,250 15,165 15,85 C15,35 55,15 95,15 C120,15 135,30 135,30 C135,30 150,15 175,15 C215,15 255,35 255,85 C255,165 135,250 135,250 Z");
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 50px rgba(242, 166, 166, 0.6);
+      position: relative;
+    }
+    #hzIn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #hzIn .ph {
+      font-size: 4rem;
+      color: #fff6e6;
+    }
+
+    /* ================= TAHAP 4 (BENTO) ================= */
+    #bento {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 100%;
+      margin: 20px 0;
+    }
+    .tile {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 12px;
+      color: #fff6e6;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tile:hover {
+      background: rgba(242, 166, 166, 0.15);
+      border-color: rgba(242, 166, 166, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(242, 166, 166, 0.2);
+    }
+    .tile:active, .tile.clicked {
+      transform: scale(0.94);
+      border-color: #f2a6a6;
+      box-shadow: 0 0 25px rgba(242, 166, 166, 0.5), inset 0 0 15px rgba(242, 166, 166, 0.3);
+      transition: all 0.1s ease;
+    }
+    .tile:nth-child(3) {
+      grid-column: span 2;
+      background: rgba(242, 166, 166, 0.09);
+      border-color: rgba(242, 166, 166, 0.25);
+    }
+    .tile em {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fff6e6;
+    }
+    .tile .ph {
+      font-size: 2.2rem;
+      color: #f2a6a6;
+    }
+    /* Partikel Hati Terbang saat Kotak Diklik */
+    .tile-burst {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 1.4rem;
+      animation: flyUpFade 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes flyUpFade {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+      }
+      50% {
+        opacity: 0.9;
+        transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -40px))) scale(1.3) rotate(var(--rot, 15deg));
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -80px))) scale(0.8) rotate(var(--rot, 30deg));
+      }
+    }
+    .tile img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    /* ================= TAHAP 5 (VIDEO) ================= */
+    .vid-box {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      overflow: hidden;
+      margin: 18px 0;
+      position: relative;
+    }
+    #vid {
+      width: 100%;
+      max-height: 260px;
+      display: block;
+      background: #000;
+    }
+    #vph {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .vid-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    #vseek {
+      flex: 1;
+      accent-color: #f2a6a6;
+    }
+    #vplay, #vmute, #vbig {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    /* ================= TAHAP 6 (TYPEWRITER) ================= */
+    .heart-card {
+      background: rgba(242, 166, 166, 0.06);
+      border: 1px solid rgba(242, 166, 166, 0.25);
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      margin: 20px 0;
+      box-shadow: 0 0 35px rgba(242, 166, 166, 0.12);
+      text-align: left;
+      line-height: 1.8;
+      font-size: 1.02rem;
+    }
+    #twA {
+      color: #fff6e6;
+    }
+    #twB {
+      color: rgba(255, 246, 230, 0.15);
+    }
+
+    /* ================= TAHAP 8 (KUE ULANG TAHUN INTERAKTIF) ================= */
+    .cake-stage {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      margin: 8px auto 14px auto;
+      border-radius: 24px;
+      padding: 16px 12px 18px 12px;
+      background: radial-gradient(circle at 50% 30%, rgba(242, 166, 166, 0.15) 0%, rgba(18, 12, 24, 0.7) 85%);
+      border: 1px solid rgba(242, 166, 166, 0.28);
+      box-shadow: 0 0 35px rgba(242, 166, 166, 0.16);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #cakeConfetti {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .cake-wrap {
+      width: 100%;
+      max-width: 290px;
+      position: relative;
+      z-index: 2;
+      user-select: none;
+    }
+    #cakeSvg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
+    }
+    /* Api Lilin */
+    .flame-group {
+      transform-origin: 160px 37px;
+      animation: flameFlicker 1.4s ease-in-out infinite alternate;
+      cursor: pointer;
+      transition: transform 0.45s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.4s ease;
+    }
+    @keyframes flameFlicker {
+      0% { transform: scale(1) rotate(-1.5deg); }
+      25% { transform: scale(1.05, 0.95) rotate(1deg); }
+      50% { transform: scale(0.96, 1.05) rotate(-2deg); }
+      75% { transform: scale(1.03, 0.97) rotate(1.5deg); }
+      100% { transform: scale(1) rotate(-1deg); }
+    }
+    .flame-halo {
+      animation: haloPulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes haloPulse {
+      0% { opacity: 0.25; transform: scale(0.9); transform-origin: 160px 26px; }
+      100% { opacity: 0.65; transform: scale(1.18); transform-origin: 160px 26px; }
+    }
+    /* Lilin Padam */
+    .flame-group.blown-out {
+      transform: scale(0) translateY(-10px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Asap Lilin */
+    #candleSmoke {
+      opacity: 0;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      transition: opacity 0.3s ease;
+    }
+    #candleSmoke.rising {
+      opacity: 0.85;
+      animation: riseSmoke 1.6s ease-out forwards;
+    }
+    @keyframes riseSmoke {
+      0% {
+        stroke-dashoffset: 60;
+        opacity: 0.85;
+        transform: translateY(0) scale(1);
+      }
+      60% {
+        stroke-dashoffset: 0;
+        opacity: 0.6;
+        transform: translateY(-8px) scale(1.15);
+      }
+      100% {
+        stroke-dashoffset: -30;
+        opacity: 0;
+        transform: translateY(-22px) scale(1.4);
+      }
+    }
+    /* Kotak Wish & Tombol Tiup */
+    .wish-box {
+      margin-top: 6px;
+      text-align: center;
+      z-index: 5;
+      position: relative;
+      width: 100%;
+    }
+    .wish-prompt {
+      font-size: 0.88rem;
+      color: #ffe8d6;
+      margin-bottom: 10px;
+      line-height: 1.5;
+      transition: all 0.5s ease;
+    }
+    .btn-blow {
+      background: linear-gradient(135deg, #f2a6a6 0%, #e98a9b 50%, #e6c594 100%);
+      color: #1a0f18;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(242, 166, 166, 0.45);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: pulseGlow 1.8s infinite alternate;
+    }
+    .btn-blow:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 24px rgba(242, 166, 166, 0.7);
+    }
+    .btn-blow:active {
+      transform: scale(0.96);
+    }
+    .btn-blow.done {
+      background: rgba(255, 255, 255, 0.12);
+      color: #e6c594;
+      border: 1px solid rgba(230, 197, 148, 0.35);
+      box-shadow: none;
+      animation: none;
+      cursor: default;
+    }
+    #msg8 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: #e6c594;
+      font-size: 1.05rem;
+      margin: 14px 0 8px 0;
+      transition: opacity 1s;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Bintang Canvas -->
+  <canvas id="stars"></canvas>
+
+  <!-- Partikel Hati / Bunga Melayang -->
+  <div id="frLayer"></div>
+  <div id="petals"></div>
+
+  <!-- Burung Origami Melintas -->
+  <svg id="bird" viewBox="0 0 120 100">
+    <polygon id="wA" points="62,50 25,20 68,36" fill="#f7c0c0" />
+    <polygon id="wB" points="68,50 105,20 62,36" fill="#f2a6a6" />
+    <polygon points="62,50 68,50 65,75" fill="#fff" opacity="0.85" />
+  </svg>
+
+  <!-- Dots Navigasi -->
+  <div id="dots"></div>
+
+  <!-- Tombol Musik Mengambang di Pojok Kanan Bawah (Tampil di Setiap Stage) -->
+  <div id="floatMusic" title="Putar / Jeda Musik">
+    <button id="floatMusicBtn" aria-label="Play/Pause Musik">▶</button>
+    <span id="floatMusicTitle">Pilih Musik ♫</span>
+  </div>
+
+  <!-- Kontainer Utama -->
+  <div class="app">
+
+    <!-- ================= STAGE 1: COUNTDOWN ================= -->
+    <div class="stage active" id="s1">
+      <div class="chip" id="chip">● Waktu Indonesia</div>
+      <h1>Her Special Day</h1>
+      <p id="status">Kado sudah siap dibuka ✦</p>
+
+      <div class="countdown-grid">
+        <div class="count-card">
+          <span class="count-num" id="d">00</span>
+          <span class="count-label">Hari</span>
+        </div>
+        <div class="count-card">
+          <span class="count-num" id="h">00</span>
+          <span class="count-label">Jam</span>
+        </div>
+        <div class="count-card">
+          <span class="count-num" id="m">00</span>
+          <span class="count-label">Menit</span>
+        </div>
+        <div class="count-card">
+          <span class="count-num" id="s">00</span>
+          <span class="count-label">Detik</span>
+        </div>
+      </div>
+
+      <button class="gift-btn" id="gift" aria-label="Buka Kado">🎁</button>
+      <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;" id="wita">00:00:00 WITA</p>
+    </div>
+
+    <!-- ================= STAGE 2: PILIH MUSIK ================= -->
+    <div class="stage" id="s2">
+      <h2>Putar Lagu Dulu Yuk</h2>
+      <p>Pilih lagu buat nemenin kamu buka kado ini ya ♫</p>
+
+      <div class="tracks-list" id="tracks"></div>
+
+      <div id="mp">
+        <span id="mpTitle" style="font-size: 0.88rem; font-weight: 600; color: #f2a6a6;">-</span>
+        <div class="mp-ctrls">
+          <button class="mp-btn" id="mpPrev">⏮</button>
+          <button class="mp-btn" id="mpPlay">▶</button>
+          <button class="mp-btn" id="mpNext">⏭</button>
+          <button class="mp-btn" id="mstop">⏹</button>
+        </div>
+      </div>
+
+      <div style="margin: 24px auto 8px; width: 100%; max-width: 300px;">
+        <button class="btn" id="openGiftBtn" style="width: 100%; font-size: 1rem; padding: 14px 24px;">Lanjut Buka Surat 💌</button>
+      </div>
+
+      <p class="hint-text" id="hint">Pilih lagunya dulu di atas, terus klik lanjut ya ✦</p>
+    </div>
+
+    <!-- ================= STAGE 3: SURAT CINTA ================= -->
+    <div class="stage" id="s3">
+      <h2>Ada Surat Buat Kamu</h2>
+      <p>Sedikit cerita dan ucapan dari aku buat kamu...</p>
+
+      <div class="envelope-box">
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">💌</div>
+        <p style="font-style: italic; color: #f2a6a6;">"Dibaca pelan-pelan ya, Nopi..."</p>
+        <button class="btn" id="letterBtn">Buka Suratnya ♥</button>
+      </div>
+    </div>
+
+    <!-- ================= STAGE 4: BENTO KENANGAN ================= -->
+    <div class="stage" id="s4">
+      <h2>Momen-Momen Kita</h2>
+      <p>Klik fotonya satu-satu ya buat lihat ceritanya ✦</p>
+
+      <div id="bento"></div>
+
+      <button class="btn" id="nextBtn">Lanjut Lagi Yuk →</button>
+    </div>
+
+    <!-- ================= STAGE 5: VIDEO ================= -->
+    <div class="stage" id="s5">
+      <h2>Video Kecil Kita</h2>
+      <p>Sedikit rekaman momen kita yang selalu aku suka</p>
+
+      <div class="vid-box">
+        <video id="vid" playsinline></video>
+        <div id="vph">
+          <div style="font-size: 2.8rem; margin-bottom: 8px;">🎬</div>
+          <p style="font-size: 0.88rem; opacity: 0.75;">(Videonya belum dimasukin)</p>
+          <p style="font-size: 0.82rem; color: #e6c594; margin-top: 6px;">Langsung klik tombol lanjut di bawah aja ya ♥</p>
+        </div>
+        <div class="vid-controls">
+          <button id="vplay">▶</button>
+          <input type="range" id="vseek" min="0" max="1000" value="0">
+          <span id="vtime" style="font-size: 0.75rem;">0:00</span>
+          <button id="vmute">🔊</button>
+          <button id="vbig" style="display:none"></button>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; width: 100%;">
+        <button class="btn btn-secondary" id="back5" style="flex: 1;">← Kembali</button>
+        <button class="btn" id="heartBtn" style="flex: 2;">Lanjut →</button>
+      </div>
+    </div>
+
+    <!-- ================= STAGE 6: TYPEWRITER HEART ================= -->
+    <div class="stage" id="s6">
+      <h2>Dari Aku Buat Kamu</h2>
+      <div class="heart-card">
+        <span id="twA"></span><span id="twB"></span>
+      </div>
+      <button class="btn hid" id="lastBtn">Masih Ada Satu Lagi ✦</button>
+    </div>
+
+    <!-- ================= STAGE 7: FINALE ================= -->
+    <div class="stage" id="s7">
+      <div style="font-size: 3.5rem; margin-bottom: 12px;">✨</div>
+      <h2>Selamat Ulang Tahun, Nopi</h2>
+      <p id="sub7" style="font-size: 1.1rem; color: #e6c594; margin: 15px 0;">Sebelum selesai, ada kue ulang tahun kecil buat kamu...</p>
+      <button class="btn" id="growBtn">Tiup Lilin Dulu Yuk 🎂</button>
+    </div>
+
+    <!-- ================= STAGE 8: KUE ULANG TAHUN INTERAKTIF ================= -->
+    <div class="stage" id="s8">
+      <h2 id="cakeTitle">Selamat Ulang Tahun ke-23, Nopi 🎂</h2>
+      
+      <div class="cake-stage" id="cakeStage">
+        <canvas id="cakeConfetti"></canvas>
+        
+        <!-- SVG Kue Ulang Tahun Cantik & Lilin -->
+        <div class="cake-wrap" id="cakeWrap">
+          <svg id="cakeSvg" viewBox="0 0 320 280">
+            <!-- Filter Glow untuk Api Lilin -->
+            <defs>
+              <filter id="flameGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <linearGradient id="cakeGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fff0f0"/>
+                <stop offset="100%" stop-color="#f7c0c0"/>
+              </linearGradient>
+              <linearGradient id="cakeGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fff8f0"/>
+                <stop offset="100%" stop-color="#f2a6a6"/>
+              </linearGradient>
+              <linearGradient id="plateGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#c9a875"/>
+                <stop offset="50%" stop-color="#fae3b4"/>
+                <stop offset="100%" stop-color="#b89358"/>
+              </linearGradient>
+              <linearGradient id="candleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffd1dc"/>
+                <stop offset="50%" stop-color="#fff6e6"/>
+                <stop offset="100%" stop-color="#f2a6a6"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Piring & Stand Kue Emas -->
+            <ellipse cx="160" cy="248" rx="122" ry="18" fill="rgba(0,0,0,0.3)"/>
+            <ellipse cx="160" cy="240" rx="116" ry="16" fill="url(#plateGrad)"/>
+            <ellipse cx="160" cy="235" rx="106" ry="12" fill="#fffaf5"/>
+
+            <!-- Kue Tingkat Bawah -->
+            <path d="M70,185 Q70,225 160,225 Q250,225 250,185 L250,150 Q160,175 70,150 Z" fill="url(#cakeGrad1)"/>
+            <ellipse cx="160" cy="150" rx="90" ry="20" fill="#fff5eb"/>
+            <!-- Frosting Leleh Tingkat Bawah -->
+            <path d="M70,150 Q90,175 110,155 Q135,180 160,155 Q185,180 210,155 Q230,175 250,150 Q160,170 70,150 Z" fill="#ffffff" opacity="0.95"/>
+            <!-- Mutiara Gula Hiasan -->
+            <circle cx="85" cy="158" r="3" fill="#e6c594"/>
+            <circle cx="120" cy="164" r="3.2" fill="#e6c594"/>
+            <circle cx="160" cy="166" r="3.5" fill="#e6c594"/>
+            <circle cx="200" cy="164" r="3.2" fill="#e6c594"/>
+            <circle cx="235" cy="158" r="3" fill="#e6c594"/>
+
+            <!-- Plakat Cokelat Putih & Emas Angka "23" di Kue -->
+            <ellipse cx="160" cy="196" rx="34" ry="18" fill="#fffaf5" stroke="url(#plateGrad)" stroke-width="2.2"/>
+            <ellipse cx="160" cy="196" rx="30" ry="14.5" fill="none" stroke="#f2a6a6" stroke-width="0.8" stroke-dasharray="2,2"/>
+            <text x="160" y="203" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif" font-size="22" font-weight="700" fill="#b86b77" letter-spacing="1">23</text>
+            <text x="135" y="199" text-anchor="middle" font-size="8" fill="#e6c594">✦</text>
+            <text x="185" y="199" text-anchor="middle" font-size="8" fill="#e6c594">✦</text>
+
+            <!-- Kue Tingkat Atas -->
+            <path d="M100,130 Q100,162 160,162 Q220,162 220,130 L220,95 Q160,115 100,95 Z" fill="url(#cakeGrad2)"/>
+            <ellipse cx="160" cy="95" rx="60" ry="15" fill="#ffffff"/>
+            <!-- Frosting Leleh Tingkat Atas -->
+            <path d="M100,95 Q115,115 130,102 Q145,122 160,105 Q175,122 190,102 Q205,115 220,95 Q160,110 100,95 Z" fill="#fff5eb"/>
+
+            <!-- Stroberi & Ceri di Atas Kue -->
+            <circle cx="125" cy="92" r="7.5" fill="#e84a5f"/>
+            <path d="M125,85 Q123,81 120,83" stroke="#5b8c5a" stroke-width="2" fill="none"/>
+            <circle cx="195" cy="92" r="7.5" fill="#e84a5f"/>
+            <path d="M195,85 Q197,81 200,83" stroke="#5b8c5a" stroke-width="2" fill="none"/>
+
+            <!-- Lilin Ulang Tahun Elegan -->
+            <rect x="154" y="48" width="12" height="42" rx="3" fill="url(#candleGrad)"/>
+            <!-- Garis Spiral Lilin Emas -->
+            <path d="M154,58 L166,54 M154,68 L166,64 M154,78 L166,74" stroke="#e6c594" stroke-width="2"/>
+            <!-- Sumbu Lilin -->
+            <path d="M160,48 Q159,42 160,37" stroke="#333" stroke-width="2.2" fill="none"/>
+
+            <!-- Asap Lilin (Muncul Saat Lilin Ditiup) -->
+            <path id="candleSmoke" d="M160,35 Q154,23 163,16 Q155,8 162,0" stroke="rgba(255,255,255,0.75)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+
+            <!-- Cahaya & Api Lilin (Interaktif: Bisa Diklik) -->
+            <g id="candleFlameGroup" class="flame-group" title="Ketuk untuk meniup lilin!">
+              <!-- Halo Aura Glow Lilin -->
+              <circle cx="160" cy="24" r="22" fill="rgba(255, 214, 112, 0.25)" class="flame-halo"/>
+              <!-- Api Luar -->
+              <path class="flame-outer" d="M160,8 Q168,22 165,28 Q162,35 160,35 Q158,35 155,28 Q152,22 160,8 Z" fill="#ff9f43" filter="url(#flameGlow)"/>
+              <!-- Api Tengah -->
+              <path class="flame-inner" d="M160,13 Q165,23 163,28 Q161,33 160,33 Q159,33 157,28 Q155,23 160,13 Z" fill="#ffd152"/>
+              <!-- Inti Api Biru Lembut -->
+              <ellipse cx="160" cy="32" rx="2.5" ry="3.5" fill="#70a1ff" opacity="0.85"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Kotak Wish & Tombol Tiup -->
+        <div class="wish-box" id="wishBox">
+          <p class="wish-prompt" id="wishPrompt">Berdoa dulu dalam hati ya, baru tiup lilinnya ✨</p>
+          <button class="btn-blow" id="blowBtn">
+            <span class="blow-icon">💨</span>
+            <span id="blowText">Tiup Lilinnya 🕯️</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pesan Penutup & Tombol Aksi -->
+      <p id="msg8"></p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; width: 100%;">
+        <button class="btn btn-secondary" id="relightBtn" style="display: none; opacity: 0;">Nyalain Lilinnya Lagi 🕯️</button>
+        <button class="btn btn-secondary" id="replayBtn" style="opacity: 0;">Ulang dari Awal ↺</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Surat Cinta (Lightbox) -->
+  <div id="lb" aria-hidden="true">
+    <div class="lb-card">
+      <button class="lb-close" id="lbx">✕</button>
+      <div id="lbm"></div>
+      <h2 id="lbh" style="color: #f2a6a6;"></h2>
+      <div id="lbp"></div>
+    </div>
+  </div>
+
+  <!-- Modal Bento Foto Hati -->
+  <div id="hl" aria-hidden="true">
+    <button class="lb-close" id="hlx" style="top: 25px; right: 25px; z-index: 110;">✕</button>
+    <div class="heart-modal-box">
+      <div id="hzIn"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIKA UTAMA -->
+  <script>
+    /* =========================================================
+       1. CONFIG  ->  DATA NOPI & DITO
+       ========================================================= */
+    const CONFIG = {
+      // Tanggal ulang tahun Nopi (3 November 2026, 00:00 WITA)
+      birthday: "2026-11-03T00:00:00+08:00",
+
+      // false = kado langsung bisa dibuka saat dites sekarang
+      // true  = kado terkunci dan menghitung mundur sampai hari H
+      lockUntilBirthday: false,
+
+      // Video kenangan (taruh video.mp4 di folder yang sama)
+      VIDEO_SRC: "video.mp4",
+
+      // Daftar musik
+      tracks: [
+        { 
+          title: "CONSTANT - Jeremy Passion & Jesse Barrera", 
+          src: "lagu3.mp3",
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/uploaded_media_1792250856702.mp3"
+        },
+        { 
+          title: "MAX - IT'S YOU feat. keshi", 
+          src: "lagu2.mp3",
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/uploaded_media_1791999051960.mp3"
+        },
+        { 
+          title: "Say That You're Mine - Valentine & JSO", 
+          src: "lagu1.mp3",
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/uploaded_media_1791955044132.mp3"
+        }
+      ],
+
+      // Surat cinta dari Dito
+      letter: {
+        title: "Hai Nopi, Selamat Ulang Tahun ke-23 ya ♥",
+        paragraphs: [
+          "Selamat ulang tahun yang ke-23 ya, Nopi. Aku seneng banget hari ini bisa ikut ngerayain hari spesial kamu.",
+          "Makasih banyak ya udah hadir di hidup aku. Makasih udah sering bikin aku ketawa, selalu sabar, dan bikin aku ngerasa nyaman setiap kali kita bareng.",
+          "Di umur kamu yang ke-23 ini, aku berdoa semoga kamu sehat terus, selalu dikelilingi hal-hal baik, dan apa yang lagi kamu usahain bisa cepet tercapai. Jangan pernah ngerasa sendiri ya, aku bakal selalu ada di sini buat dukung dan nemenin kamu."
+        ],
+        sign: "— Dari Dito ♥"
+      },
+
+      // Kenangan foto (Bento Grid) - taruh foto1.jpeg s/d foto5.jpeg di folder yang sama
+      memories: [
+        { 
+          src: "foto1.jpeg", 
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/media_1791955669961.jpg",
+          title: "Awal Kita Bertemu Lagi",    
+          text: "Masih inget waktu kita awal-awal jalan bareng lagi dan ngobrol banyak hal.", 
+          heart: false 
+        },
+        { 
+          src: "foto2.jpeg", 
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/media_1791961064299_17453de6.jpg",
+          title: "Jalan Bareng Nopi",   
+          text: "Salah satu hari paling menyenangkan saat kita jalan lagi.", 
+          heart: false 
+        },
+        { 
+          src: "foto3.jpeg", 
+          backup: "foto3.jpeg",
+          title: "Tempat Paling Nyaman",      
+          text: "Sederhana tapi berharga. Cukup berdiri di sebelahmu, semuanya langsung terasa lengkap.", 
+          heart: false  
+        },
+        { 
+          src: "foto4.jpeg", 
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/media_1791961149241_5bde8895.jpg",
+          title: "Cerita & Perjalanan", 
+          text: "Ke mana aja rasanya selalu seru kalau perginya sama kamu.", 
+          heart: false 
+        },
+        { 
+          src: "foto5.jpeg", 
+          backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/media_1791957516508.jpg",
+          title: "Selalu Bersamamu",    
+          text: "Semoga ke depannya kita bisa jalan-jalan terus dan bikin lebih banyak cerita bareng ya.", 
+          heart: false 
+        }
+      ],
+
+      // Animasi mesin tik di dalam bentuk hati
+      heartMessage: "Untuk Nopi, terima kasih sudah menjadi orang yang begitu berharga untuk Dito. Kamu adalah alasan di balik senyumku setiap hari. Terima kasih atas kesabaran dan kebaikan hatimu. Aku sayang kamu, hari ini, esok, dan seterusnya. ♥",
+
+      // Finale & Kue Ulang Tahun Interaktif
+      finalSub: "Sebelum selesai, ada kue ulang tahun kecil buat kamu... ✦",
+      treeMessage: "Selamat ulang tahun yang ke-23 ya, Nopi. Makasih udah selalu ada dan jadi orang yang paling berharga buat aku. Semoga di umur 23 ini kamu sehat terus, makin bahagia, dan semua yang kamu pengenin bisa tercapai. Aku bakal selalu ada buat nemenin kamu ♥"
+    };
+
+    /* =========================================================
+       2. LOGIKA APLIKASI
+       ========================================================= */
+    const $ = id => document.getElementById(id);
+    const pad = n => String(n).padStart(2, "0");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const TOTAL = 8;
+    let cur = 1;
+    let chosen = -1;
+    let letterOpen = false;
+    const audio = new Audio(); audio.loop = true;
+    const target = new Date(CONFIG.birthday).getTime();
+
+    /* ---------- Dots Navigasi (Bisa Diklik) ---------- */
+    const STAGE_NAMES = [
+      "1. Countdown",
+      "2. Pilih Musik",
+      "3. Surat Cinta",
+      "4. Momen Kita",
+      "5. Video Kenangan",
+      "6. Pesan Hati",
+      "7. Ucapan Spesial",
+      "8. Kue Ulang Tahun"
+    ];
+    const dots = $("dots");
+    for (let i = 1; i <= TOTAL; i++) { 
+      const d = document.createElement("i"); 
+      d.title = STAGE_NAMES[i - 1] || ("Tahap " + i);
+      d.setAttribute("role", "button");
+      d.setAttribute("tabindex", "0");
+      d.setAttribute("aria-label", d.title);
+      d.onclick = () => {
+        if (i === cur) return;
+        if (i > 1 && !unlocked()) {
+          if (window.gsap) gsap.fromTo("#gift", { x: -8 }, { x: 0, duration: .5, ease: "elastic.out(1,.3)" });
+          return;
+        }
+        // Tutup modal surat/foto jika sedang terbuka
+        if ($("lb") && $("lb").classList.contains("open")) {
+          letterOpen = false;
+          $("lb").classList.remove("open");
+          $("lb").setAttribute("aria-hidden", "true");
+        }
+        if ($("hl") && $("hl").classList.contains("open")) {
+          $("hl").classList.remove("open");
+          $("hl").setAttribute("aria-hidden", "true");
+        }
+        go(i);
+      };
+      d.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          d.click();
+        }
+      };
+      dots.appendChild(d); 
+    }
+    function paintDots() { 
+      [...dots.children].forEach((d, i) => {
+        d.classList.toggle("on", i < cur);
+        d.classList.toggle("current", i + 1 === cur);
+      }); 
+    }
+
+    /* ---------- Burung Origami Melintas ---------- */
+    function flyBird() {
+      if (reduce || !window.gsap) return;
+      const y = innerHeight * (0.2 + Math.random() * 0.35);
+      gsap.set("#bird", { x: -180, y, autoAlpha: 1, scale: 0.7 + Math.random() * 0.4 });
+      gsap.to("#bird", { x: innerWidth + 180, y: y - 90, duration: 2.8, ease: "power1.inOut", onComplete: () => gsap.set("#bird", { autoAlpha: 0 }) });
+      gsap.fromTo("#wA", { rotation: -18, svgOrigin: "62 50" }, { rotation: 18, svgOrigin: "62 50", duration: .22, repeat: 12, yoyo: true, ease: "sine.inOut" });
+      gsap.fromTo("#wB", { rotation: 14, svgOrigin: "68 50" }, { rotation: -14, svgOrigin: "68 50", duration: .22, repeat: 12, yoyo: true, ease: "sine.inOut" });
+    }
+
+    /* ---------- Navigasi Tahap (Stages) ---------- */
+    function go(n) {
+      const from = document.querySelector(".stage.active");
+      const to = $("s" + n);
+      const show = () => {
+        if (from) from.classList.remove("active");
+        to.classList.add("active");
+        cur = n; paintDots();
+        if (window.gsap && !reduce) gsap.fromTo(to.children, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .8, stagger: .09, ease: "power2.out", clearProps: "transform" });
+        onEnter(n);
+      };
+      if (from && window.gsap && !reduce) gsap.to(from, { opacity: 0, duration: .35, onComplete: () => { gsap.set(from, { opacity: 1 }); show(); } });
+      else show();
+      if (n > 1) flyBird();
+    }
+
+    function onEnter(n) {
+      if (n !== 5) $("vid").pause();
+      if (n === 5) initVideo();
+      if (n === 6) startTypewriter();
+      if (n === 8) initCakeStage();
+      if (n === 3) spawnFloaters();
+    }
+
+    /* ---------- Bintang Latar Belakang ---------- */
+    (function stars() {
+      const c = $("stars"), x = c.getContext("2d");
+      let w, h, pts = [];
+      function size() {
+        w = c.width = innerWidth; h = c.height = innerHeight;
+        pts = Array.from({ length: Math.min(140, Math.floor(w * h / 9000)) }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.3 + .3, p: Math.random() * 6.28 }));
+      }
+      function draw(t) {
+        x.clearRect(0, 0, w, h);
+        pts.forEach(s => { x.globalAlpha = .35 + .45 * Math.sin(t / 900 + s.p); x.fillStyle = "#fff6e6"; x.beginPath(); x.arc(s.x, s.y, s.r, 0, 6.28); x.fill(); });
+        if (!reduce) requestAnimationFrame(draw);
+      }
+      addEventListener("resize", size); size(); requestAnimationFrame(draw);
+    })();
+
+    /* ---------- TAHAP 1: Countdown ---------- */
+    const unlocked = () => !CONFIG.lockUntilBirthday || Date.now() >= target;
+    function tick() {
+      let diff = Math.max(0, target - Date.now());
+      const d = Math.floor(diff / 864e5); diff -= d * 864e5;
+      const h = Math.floor(diff / 36e5);  diff -= h * 36e5;
+      const m = Math.floor(diff / 6e4);   diff -= m * 6e4;
+      const s = Math.floor(diff / 1e3);
+      $("d").textContent = pad(d); $("h").textContent = pad(h); $("m").textContent = pad(m); $("s").textContent = pad(s);
+      const ok = unlocked();
+      $("gift").classList.toggle("locked", !ok);
+      $("gift").setAttribute("aria-disabled", String(!ok));
+      $("status").textContent = ok ? "Kadonya udah siap dibuka ✦" : "Sabar ya, kadonya baru bisa dibuka pas hari ulang tahun kamu ♥";
+      const t = new Date().toLocaleTimeString("id-ID", { timeZone: "Asia/Makassar", hour: "2-digit", minute: "2-digit", second: "2-digit" }).replace(/\./g, ":");
+      if ($("wita")) $("wita").textContent = t + " WITA";
+      if ($("chip")) $("chip").textContent = "● " + t.slice(0, 5) + " WITA";
+    }
+    setInterval(tick, 1000); tick();
+
+    $("gift").onclick = () => {
+      if (!unlocked()) { 
+        if (window.gsap) gsap.fromTo("#gift", { x: -8 }, { x: 0, duration: .5, ease: "elastic.out(1,.3)" }); 
+        return; 
+      }
+      go(2);
+    };
+
+    /* ---------- Pemutar Musik (Stage 2) ---------- */
+    function setTrack(i, play = true) {
+      chosen = i;
+      const t = CONFIG.tracks[i];
+      [...$("tracks").children].forEach((b, k) => b.classList.toggle("on", k === i));
+      $("mpTitle").textContent = t.title;
+      $("mp").classList.add("show");
+      $("hint").textContent = "Lagunya udah nyala ♫ Yuk klik tombol lanjut di bawah";
+      if (t.src) { 
+        audio.src = t.src; 
+        audio.onerror = () => {
+          if (!audio.dataset.retried && t.backup) {
+            audio.dataset.retried = "1";
+            audio.src = t.backup;
+            if (play) audio.play().catch(() => {});
+          }
+        };
+        if (play) audio.play().catch(() => {}); 
+      } else {
+        audio.removeAttribute("src");
+      }
+      syncPlay();
+    }
+    function syncPlay() {
+      const on = !audio.paused && !!audio.src;
+      $("mpPlay").textContent = on ? "❚❚" : "▶";
+      $("mp").classList.toggle("playing", on);
+
+      // Sinkronisasi tombol floating di pojok kanan bawah
+      if ($("floatMusicBtn")) $("floatMusicBtn").textContent = on ? "❚❚" : "▶";
+      if ($("floatMusic")) $("floatMusic").classList.toggle("playing", on);
+      if ($("floatMusicTitle")) {
+        const curTitle = chosen >= 0 ? CONFIG.tracks[chosen].title : "Putar Musik ♫";
+        $("floatMusicTitle").textContent = curTitle;
+      }
+    }
+    audio.onplay = audio.onpause = syncPlay;
+
+    // Toggle play/pause dari tombol floating pojok kanan bawah
+    function toggleAudio() {
+      if (!audio.src) {
+        setTrack(0, true);
+        return;
+      }
+      audio.paused ? audio.play().catch(() => {}) : audio.pause();
+    }
+    if ($("floatMusic")) {
+      $("floatMusic").onclick = (e) => {
+        e.stopPropagation();
+        toggleAudio();
+      };
+    }
+
+    CONFIG.tracks.forEach((t, i) => {
+      const b = document.createElement("button");
+      b.className = "track"; b.textContent = "♪  " + t.title;
+      b.onclick = () => setTrack(i);
+      $("tracks").appendChild(b);
+    });
+
+    $("mstop").onclick = () => { audio.pause(); };
+    $("mpPlay").onclick = () => { if (chosen < 0) return; toggleAudio(); };
+    $("mpPrev").onclick = () => setTrack((chosen - 1 + CONFIG.tracks.length) % CONFIG.tracks.length);
+    $("mpNext").onclick = () => setTrack((chosen + 1) % CONFIG.tracks.length);
+
+    /* ---------- TAHAP 2: Tombol Buka Surat ---------- */
+    function openGift() {
+      if (chosen < 0) {
+        $("hint").textContent = "Pilih satu lagu dulu ya ✦";
+        if (window.gsap) gsap.fromTo("#hint", { x: -6 }, { x: 0, duration: .5, ease: "elastic.out(1,.3)" });
+        return;
+      }
+      go(3);
+    }
+    if ($("openGiftBtn")) $("openGiftBtn").onclick = openGift;
+
+    /* ---------- TAHAP 3: Floaters & Surat ---------- */
+    function spawnFloaters() {
+      const L = $("frLayer"); if (L.childElementCount) return;
+      for (let i = 0; i < 16; i++) {
+        const s = document.createElement("span");
+        s.textContent = i % 3 ? "♥" : "✦";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.fontSize = 12 + Math.random() * 18 + "px";
+        s.style.animationDuration = 8 + Math.random() * 8 + "s";
+        s.style.animationDelay = -Math.random() * 10 + "s";
+        L.appendChild(s);
+      }
+    }
+
+    const onImgErr = (img) => {
+      const b = img.dataset.backup;
+      if (b && !img.dataset.backedUp) {
+        img.dataset.backedUp = "1";
+        img.src = b;
+        return;
+      }
+      if (img.src.endsWith('.jpeg')) {
+        img.src = img.src.replace('.jpeg', '.jpg');
+      } else if (img.src.endsWith('.jpg')) {
+        img.src = img.src.replace('.jpg', '.png');
+      } else {
+        img.style.display = 'none';
+        if (img.nextElementSibling) img.nextElementSibling.style.display = 'block';
+      }
+    };
+
+    const lb = $("lb");
+    function openLB({ src, backup, title, text, html }) {
+      const bAttr = backup ? ` data-backup="${backup}"` : "";
+      $("lbm").innerHTML = src ? `<img src="${src}" alt="${title || ""}"${bAttr} onerror="onImgErr(this)">` : "";
+      $("lbm").style.display = src ? "block" : "none";
+      $("lbh").textContent = title || "";
+      $("lbp").innerHTML = html || text || "";
+      lb.classList.add("open"); lb.setAttribute("aria-hidden", "false");
+    }
+    function closeLB() {
+      lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true");
+      if (letterOpen) { letterOpen = false; go(4); }
+    }
+    $("lbx").onclick = closeLB;
+    lb.onclick = e => { if (e.target === lb) closeLB(); };
+
+    $("letterBtn").onclick = () => {
+      letterOpen = true;
+      const L = CONFIG.letter;
+      openLB({ 
+        title: L.title, 
+        html: L.paragraphs.map(p => `<span class="lp">${p}</span>`).join("") + `<span class="lp sign">${L.sign}</span>` 
+      });
+    };
+
+    /* ---------- TAHAP 4: Bento Kenangan ---------- */
+    const hl = $("hl");
+    function spawnTileBurst(x, y) {
+      const symbols = ["♥", "✦", "✨", "🌸", "💖"];
+      for (let i = 0; i < 6; i++) {
+        const el = document.createElement("span");
+        el.className = "tile-burst";
+        el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+        const angle = (Math.PI * 2 * i) / 6 + (Math.random() - 0.5);
+        const dist = 30 + Math.random() * 40;
+        el.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        el.style.setProperty("--dy", Math.sin(angle) * dist - 30 + "px");
+        el.style.setProperty("--rot", (Math.random() * 60 - 30) + "deg");
+        el.style.color = ["#f2a6a6", "#e6c594", "#ffb6c1", "#ffd1dc"][i % 4];
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 750);
+      }
+    }
+    function renderBento() {
+      const bento = $("bento");
+      bento.innerHTML = "";
+      CONFIG.memories.forEach(m => {
+        const b = document.createElement("button");
+        b.className = "tile";
+        const bAttr = m.backup ? ` data-backup="${m.backup}"` : "";
+        b.innerHTML = (m.src ? `<img src="${m.src}" alt="${m.title}"${bAttr} onerror="onImgErr(this)"><span class="ph" style="display:none">♥</span>` : `<span class="ph">♥</span>`) + `<em>${m.title}</em>`;
+        b.onclick = (e) => {
+          // Efek animasi klik: pop & partikel hati
+          b.classList.add("clicked");
+          setTimeout(() => b.classList.remove("clicked"), 200);
+          const rect = b.getBoundingClientRect();
+          const clickX = e.clientX || (rect.left + rect.width / 2);
+          const clickY = e.clientY || (rect.top + rect.height / 2);
+          spawnTileBurst(clickX, clickY);
+
+          setTimeout(() => {
+            if (m.heart) {
+              $("hzIn").innerHTML = m.src ? `<img src="${m.src}" alt="${m.title}"${bAttr} onerror="onImgErr(this)"><span class="ph" style="display:none">♥</span>` : `<span class="ph">♥</span>`;
+              hl.classList.add("open"); hl.setAttribute("aria-hidden", "false");
+            } else {
+              openLB(m);
+            }
+          }, 120);
+        };
+        bento.appendChild(b);
+      });
+    }
+    renderBento();
+    function closeHL() { hl.classList.remove("open"); hl.setAttribute("aria-hidden", "true"); }
+    $("hlx").onclick = closeHL;
+    hl.onclick = e => { if (e.target === hl) closeHL(); };
+    addEventListener("keydown", e => { if (e.key === "Escape") { closeHL(); if (lb.classList.contains("open")) closeLB(); } });
+    $("nextBtn").onclick = () => go(5);
+
+    /* ---------- TAHAP 5: Video ---------- */
+    const vid = $("vid");
+    let wasPlayingMusic = false;
+    function initVideo() {
+      if (CONFIG.VIDEO_SRC) {
+        if (!vid.getAttribute("src")) vid.src = CONFIG.VIDEO_SRC;
+        vid.onerror = () => {
+          $("vph").style.display = "";
+          $("heartBtn").classList.remove("hid");
+        };
+        $("vph").style.display = "none";
+      } else {
+        $("vph").style.display = "";
+        $("heartBtn").classList.remove("hid");
+      }
+    }
+    const fmt = s => isFinite(s) ? Math.floor(s / 60) + ":" + pad(Math.floor(s % 60)) : "0:00";
+    function togglePlay() { if (!CONFIG.VIDEO_SRC) return; vid.paused ? vid.play() : vid.pause(); }
+    $("vbig").onclick = $("vplay").onclick = togglePlay;
+    vid.onplay = () => {
+      wasPlayingMusic = !audio.paused; audio.pause();
+      $("vplay").textContent = "❚❚"; $("vbig").classList.add("gone");
+    };
+    vid.onpause = () => {
+      $("vplay").textContent = "▶"; $("vbig").classList.remove("gone");
+      if (wasPlayingMusic && cur !== 5) audio.play().catch(() => {});
+    };
+    vid.ontimeupdate = () => {
+      $("vseek").value = (vid.currentTime / (vid.duration || 1)) * 1000;
+      $("vtime").textContent = fmt(vid.currentTime);
+      if (vid.duration && vid.currentTime / vid.duration > .85) $("heartBtn").classList.remove("hid");
+    };
+    vid.onended = () => { $("heartBtn").classList.remove("hid"); if (wasPlayingMusic) audio.play().catch(() => {}); };
+    $("vseek").oninput = e => { if (vid.duration) vid.currentTime = (e.target.value / 1000) * vid.duration; };
+    $("vmute").onclick = () => { vid.muted = !vid.muted; $("vmute").textContent = vid.muted ? "🔇" : "🔊"; };
+    $("heartBtn").onclick = () => { if (wasPlayingMusic) audio.play().catch(() => {}); go(6); };
+    $("back5").onclick = () => { if (wasPlayingMusic) audio.play().catch(() => {}); go(4); };
+
+    /* ---------- TAHAP 6: Mesin Tik Hati ---------- */
+    let twTimer;
+    function startTypewriter() {
+      clearInterval(twTimer);
+      const msg = CONFIG.heartMessage;
+      $("lastBtn").classList.add("hid");
+      $("twA").textContent = ""; $("twB").textContent = msg;
+      let i = 0;
+      twTimer = setInterval(() => {
+        i++;
+        $("twA").textContent = msg.slice(0, i);
+        $("twB").textContent = msg.slice(i);
+        if (i >= msg.length) { 
+          clearInterval(twTimer); 
+          $("lastBtn").classList.remove("hid"); 
+        }
+      }, reduce ? 5 : 45);
+    }
+    $("lastBtn").onclick = () => go(7);
+
+    /* ---------- TAHAP 7: Finale ---------- */
+    $("sub7").textContent = CONFIG.finalSub;
+    $("msg8").textContent = CONFIG.treeMessage;
+    $("growBtn").onclick = () => go(8);
+
+    /* ---------- TAHAP 8: Kue Ulang Tahun Interaktif (Make a Wish) ---------- */
+    let candleBlown = false;
+    let confettiAnimId = null;
+
+    function initCakeStage() {
+      candleBlown = false;
+      const flame = $("candleFlameGroup");
+      const smoke = $("candleSmoke");
+      const blowBtn = $("blowBtn");
+      const blowText = $("blowText");
+      const wishPrompt = $("wishPrompt");
+      const msg = $("msg8");
+      const replayBtn = $("replayBtn");
+      const relightBtn = $("relightBtn");
+
+      if (flame) flame.classList.remove("blown-out");
+      if (smoke) smoke.classList.remove("rising");
+      if (blowBtn) {
+        blowBtn.classList.remove("done");
+        blowBtn.disabled = false;
+        if (blowText) blowText.textContent = "Tiup Lilinnya 🕯️";
+      }
+      if (wishPrompt) {
+        wishPrompt.textContent = "Berdoa dulu dalam hati ya, baru tiup lilinnya ✨";
+        wishPrompt.style.color = "#ffe8d6";
+      }
+      if (msg) {
+        msg.textContent = CONFIG.treeMessage;
+        msg.style.opacity = "0";
+      }
+      if (replayBtn) {
+        replayBtn.style.opacity = "0";
+        replayBtn.style.pointerEvents = "none";
+      }
+      if (relightBtn) {
+        relightBtn.style.display = "none";
+        relightBtn.style.opacity = "0";
+        relightBtn.style.pointerEvents = "none";
+      }
+
+      if (!$("petals").childElementCount) {
+        for (let i = 0; i < 22; i++) {
+          const s = document.createElement("span");
+          s.textContent = i % 2 ? "♥" : "✦";
+          s.style.left = Math.random() * 100 + "%";
+          s.style.fontSize = 12 + Math.random() * 14 + "px";
+          s.style.animationDuration = 9 + Math.random() * 9 + "s";
+          s.style.animationDelay = -Math.random() * 12 + "s";
+          $("petals").appendChild(s);
+        }
+      }
+
+      function handleBlow() {
+        if (candleBlown) return;
+        blowCandle();
+      }
+
+      if (blowBtn) blowBtn.onclick = handleBlow;
+      if (flame) flame.onclick = handleBlow;
+      if (relightBtn) relightBtn.onclick = relightCandle;
+    }
+
+    function blowCandle() {
+      if (candleBlown) return;
+      candleBlown = true;
+
+      const flame = $("candleFlameGroup");
+      const smoke = $("candleSmoke");
+      const blowBtn = $("blowBtn");
+      const blowText = $("blowText");
+      const wishPrompt = $("wishPrompt");
+      const msg = $("msg8");
+      const replayBtn = $("replayBtn");
+      const relightBtn = $("relightBtn");
+
+      if (flame) flame.classList.add("blown-out");
+      if (smoke) {
+        smoke.classList.remove("rising");
+        void smoke.offsetWidth;
+        smoke.classList.add("rising");
+      }
+
+      if (blowBtn) {
+        blowBtn.classList.add("done");
+        blowBtn.disabled = true;
+        if (blowText) blowText.textContent = "Yeay, udah ditiup! 🎉";
+      }
+
+      if (wishPrompt) {
+        wishPrompt.innerHTML = "Aamiin.. Semoga semua doa baik kamu dikabulin ya ♥";
+        wishPrompt.style.color = "#f2a6a6";
+      }
+
+      fireCakeConfetti();
+
+      if (window.gsap && !reduce) {
+        gsap.to(msg, { opacity: 1, duration: 1.2, delay: 0.8 });
+        gsap.to([relightBtn, replayBtn], {
+          opacity: 1,
+          duration: 0.9,
+          delay: 1.6,
+          onStart: () => {
+            if (relightBtn) relightBtn.style.display = "inline-flex";
+          },
+          onComplete: () => {
+            if (replayBtn) replayBtn.style.pointerEvents = "auto";
+            if (relightBtn) relightBtn.style.pointerEvents = "auto";
+          }
+        });
+      } else {
+        if (msg) msg.style.opacity = "1";
+        if (relightBtn) {
+          relightBtn.style.display = "inline-flex";
+          relightBtn.style.opacity = "1";
+          relightBtn.style.pointerEvents = "auto";
+        }
+        if (replayBtn) {
+          replayBtn.style.opacity = "1";
+          replayBtn.style.pointerEvents = "auto";
+        }
+      }
+    }
+
+    function relightCandle() {
+      candleBlown = false;
+      const flame = $("candleFlameGroup");
+      const smoke = $("candleSmoke");
+      const blowBtn = $("blowBtn");
+      const blowText = $("blowText");
+      const wishPrompt = $("wishPrompt");
+      const relightBtn = $("relightBtn");
+
+      if (flame) flame.classList.remove("blown-out");
+      if (smoke) smoke.classList.remove("rising");
+      if (blowBtn) {
+        blowBtn.classList.remove("done");
+        blowBtn.disabled = false;
+        if (blowText) blowText.textContent = "Tiup Lilinnya 🕯️";
+      }
+      if (wishPrompt) {
+        wishPrompt.textContent = "Mau berdoa lagi? Tiup lagi lilinnya ya ✨";
+        wishPrompt.style.color = "#ffe8d6";
+      }
+      if (relightBtn) {
+        relightBtn.style.display = "none";
+        relightBtn.style.opacity = "0";
+      }
+    }
+
+    /* ---------- Sistem Partikel Konfeti Pesta Ulang Tahun ---------- */
+    function fireCakeConfetti() {
+      const canvas = $("cakeConfetti");
+      const stage = $("cakeStage");
+      if (!canvas || !stage) return;
+      const ctx = canvas.getContext("2d");
+
+      const width = canvas.width = stage.clientWidth || 380;
+      const height = canvas.height = stage.clientHeight || 340;
+
+      const colors = ["#f2a6a6", "#e6c594", "#ffffff", "#ffd1dc", "#fff176", "#ffb3ba", "#ffd54f"];
+      const shapes = ["rect", "circle", "star", "heart"];
+      let pieces = [];
+
+      for (let i = 0; i < 95; i++) {
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const x = width * 0.5 + (Math.random() - 0.5) * 40;
+        const y = height * 0.38 + (Math.random() - 0.5) * 20;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 4 + Math.random() * 8.5;
+
+        pieces.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2.5,
+          color,
+          shape,
+          size: 4 + Math.random() * 5,
+          rot: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          gravity: 0.14,
+          friction: 0.965,
+          alpha: 1,
+          decay: 0.007 + Math.random() * 0.009
+        });
+      }
+
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+
+      function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        const step = Math.PI / spikes;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+          x = cx + Math.cos(rot) * outerRadius;
+          y = cy + Math.sin(rot) * outerRadius;
+          ctx.lineTo(x, y);
+          rot += step;
+          x = cx + Math.cos(rot) * innerRadius;
+          y = cy + Math.sin(rot) * innerRadius;
+          ctx.lineTo(x, y);
+          rot += step;
+        }
+        ctx.lineTo(cx, cy - outerRadius);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function updateConfetti() {
+        ctx.clearRect(0, 0, width, height);
+        let active = 0;
+
+        for (let i = 0; i < pieces.length; i++) {
+          const p = pieces[i];
+          if (p.alpha <= 0) continue;
+          active++;
+
+          p.vx *= p.friction;
+          p.vy *= p.friction;
+          p.vy += p.gravity;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.rotSpeed;
+          p.alpha -= p.decay;
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fillStyle = p.color;
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+
+          if (p.shape === "circle") {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (p.shape === "rect") {
+            ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.6);
+          } else if (p.shape === "star") {
+            drawStar(ctx, 0, 0, 5, p.size, p.size * 0.45);
+          } else if (p.shape === "heart") {
+            ctx.beginPath();
+            ctx.moveTo(0, p.size * 0.3);
+            ctx.bezierCurveTo(-p.size * 0.6, -p.size * 0.3, -p.size * 0.6, -p.size * 0.8, 0, -p.size * 0.4);
+            ctx.bezierCurveTo(p.size * 0.6, -p.size * 0.8, p.size * 0.6, -p.size * 0.3, 0, p.size * 0.3);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        if (active > 0) {
+          confettiAnimId = requestAnimationFrame(updateConfetti);
+        } else {
+          ctx.clearRect(0, 0, width, height);
+        }
+      }
+
+      updateConfetti();
+    }
+
+    $("replayBtn").onclick = (e) => {
+      e.stopPropagation();
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+      $("replayBtn").style.pointerEvents = "none";
+      clearInterval(twTimer);
+      $("twA").textContent = "";
+      $("twB").textContent = "";
+      $("vid").pause();
+      $("vid").currentTime = 0;
+      go(1);
+    };
+
+    paintDots();
+  </script>
+</body>
+</html>
