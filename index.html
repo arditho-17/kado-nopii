@@ -1284,6 +1284,9 @@
       const ok = unlocked();
       $("gift").classList.toggle("locked", !ok);
       $("gift").setAttribute("aria-disabled", String(!ok));
+      if ($("floatMusic")) $("floatMusic").classList.toggle("hid", !ok);
+      if ($("dots")) $("dots").classList.toggle("hid", !ok);
+      if (!ok && !audio.paused) audio.pause();
       $("status").textContent = ok ? "Kadonya udah siap dibuka ✦" : "Sabar ya, kadonya baru bisa dibuka pas hari ulang tahun kamu ♥";
       const t = new Date().toLocaleTimeString("id-ID", { timeZone: "Asia/Makassar", hour: "2-digit", minute: "2-digit", second: "2-digit" }).replace(/\./g, ":");
       if ($("wita")) $("wita").textContent = t + " WITA";
@@ -1339,6 +1342,7 @@
 
     // Toggle play/pause dari tombol floating pojok kanan bawah
     function toggleAudio() {
+      if (!unlocked()) return;
       if (!audio.src) {
         setTrack(0, true);
         return;
