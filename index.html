@@ -779,9 +779,258 @@
       transition: opacity 1s;
       line-height: 1.6;
     }
+
+    /* ================= TAHAP 9 (HALAMAN CLOSURE: SURAT TERBUKA & REFLEKSI) ================= */
+    #closureBg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 15%, #191824 0%, #0f0e16 60%, #08070c 100%);
+      transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    body.closure-mode #closureBg {
+      opacity: 1;
+    }
+    body.closure-mode #frLayer,
+    body.closure-mode #petals {
+      opacity: 0 !important;
+      transition: opacity 1.5s ease;
+    }
+    body.closure-mode #dots i.on {
+      background: rgba(201, 184, 168, 0.45);
+      box-shadow: none;
+    }
+    body.closure-mode #dots i.current {
+      background: #d6c7b8;
+      box-shadow: 0 0 10px rgba(214, 199, 184, 0.5);
+    }
+    .btn-closure-enter {
+      background: linear-gradient(135deg, rgba(230, 197, 148, 0.2) 0%, rgba(242, 166, 166, 0.18) 100%);
+      color: #fff6e6;
+      border: 1px solid rgba(230, 197, 148, 0.45);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+      width: 100%;
+      max-width: 320px;
+      margin-top: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .btn-closure-enter:hover {
+      background: linear-gradient(135deg, rgba(230, 197, 148, 0.32) 0%, rgba(242, 166, 166, 0.28) 100%);
+      border-color: #e6c594;
+      box-shadow: 0 8px 28px rgba(230, 197, 148, 0.25);
+    }
+
+    /* Kontainer Scroll Storytelling Closure */
+    #s9 {
+      width: 100%;
+      max-width: 520px;
+      padding: 40px 6px 110px;
+      text-align: left;
+    }
+    .closure-header {
+      text-align: center;
+      margin-bottom: 36px;
+      padding-top: 16px;
+    }
+    .closure-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #b8afa6;
+      border: 1px solid rgba(214, 199, 184, 0.22);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .closure-scroll-hint {
+      font-size: 0.82rem;
+      color: rgba(214, 199, 184, 0.65);
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      animation: gentleFloat 2.4s ease-in-out infinite;
+    }
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.55; }
+      50% { transform: translateY(6px); opacity: 0.95; }
+    }
+
+    .closure-section {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(214, 199, 184, 0.13);
+      border-radius: 22px;
+      padding: 32px 26px;
+      margin: 0 0 42px 0;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.38);
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1), transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.6s ease;
+    }
+    .closure-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .closure-section:hover {
+      border-color: rgba(214, 199, 184, 0.28);
+    }
+    .closure-part-label {
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #a89f96;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .closure-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      font-style: italic;
+      color: #efe9e1;
+      margin-bottom: 18px;
+      line-height: 1.35;
+    }
+    .closure-section p {
+      font-size: 0.98rem;
+      line-height: 1.88;
+      color: #dcd4cb;
+      margin-bottom: 16px;
+      font-weight: 300;
+      letter-spacing: 0.15px;
+    }
+    .closure-section p:last-child {
+      margin-bottom: 0;
+    }
+    .closure-quote-highlight {
+      border-left: 2px solid rgba(214, 199, 184, 0.45);
+      padding-left: 16px;
+      margin-top: 20px;
+      color: #f3ede4 !important;
+      font-weight: 400 !important;
+      font-style: italic;
+    }
+    .closure-sign {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(214, 199, 184, 0.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: #d6c7b8;
+      font-size: 1.05rem;
+    }
+    .closure-divider {
+      text-align: center;
+      color: rgba(214, 199, 184, 0.3);
+      font-size: 0.9rem;
+      margin: -14px 0 28px 0;
+      letter-spacing: 8px;
+    }
+
+    /* Kontrol Audio Khusus Halaman Closure */
+    #closureAudioCtrl {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 105;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(18, 17, 26, 0.85);
+      border: 1px solid rgba(214, 199, 184, 0.25);
+      backdrop-filter: blur(12px);
+      padding: 7px 12px;
+      border-radius: 30px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      transition: all 0.35s ease;
+    }
+    body.closure-mode #closureAudioCtrl {
+      display: flex;
+    }
+    body.closure-mode #floatMusic {
+      display: none !important;
+    }
+    .cl-audio-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(214, 199, 184, 0.25);
+      background: rgba(255, 255, 255, 0.06);
+      color: #efe9e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cl-audio-btn:hover {
+      background: rgba(214, 199, 184, 0.2);
+      border-color: #d6c7b8;
+      transform: scale(1.06);
+    }
+    .cl-audio-label {
+      font-size: 0.76rem;
+      color: #d6c7b8;
+      letter-spacing: 0.4px;
+      padding: 0 4px;
+      white-space: nowrap;
+    }
+    .cl-wave {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+      margin-left: 4px;
+    }
+    .cl-wave span {
+      width: 2px;
+      height: 4px;
+      background: #d6c7b8;
+      border-radius: 2px;
+      transition: height 0.2s ease;
+    }
+    #closureAudioCtrl.playing .cl-wave span:nth-child(1) { animation: clBar 1.1s ease-in-out infinite; }
+    #closureAudioCtrl.playing .cl-wave span:nth-child(2) { animation: clBar 0.8s ease-in-out 0.2s infinite; }
+    #closureAudioCtrl.playing .cl-wave span:nth-child(3) { animation: clBar 1.25s ease-in-out 0.4s infinite; }
+    @keyframes clBar {
+      0%, 100% { height: 3px; opacity: 0.45; }
+      50% { height: 12px; opacity: 1; }
+    }
+    @media (max-width: 480px) {
+      .closure-section {
+        padding: 26px 20px;
+        margin-bottom: 34px;
+      }
+      .closure-section h3 {
+        font-size: 1.35rem;
+      }
+      .closure-section p {
+        font-size: 0.94rem;
+        line-height: 1.82;
+      }
+      #closureAudioCtrl {
+        top: 14px;
+        right: 14px;
+        padding: 6px 10px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Background Transisi Tenang (Khusus Halaman Closure) -->
+  <div id="closureBg"></div>
 
   <!-- Background Bintang Canvas -->
   <canvas id="stars"></canvas>
@@ -804,6 +1053,16 @@
   <div id="floatMusic" title="Putar / Jeda Musik">
     <button id="floatMusicBtn" aria-label="Play/Pause Musik">▶</button>
     <span id="floatMusicTitle">Pilih Musik ♫</span>
+  </div>
+
+  <!-- Kontrol Audio Estetik Khusus Halaman Closure -->
+  <div id="closureAudioCtrl" class="playing" title="Kontrol Musik Instrumental">
+    <div class="cl-wave" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <span class="cl-audio-label" id="clAudioLabel">Instrumental</span>
+    <button class="cl-audio-btn" id="clPlayBtn" aria-label="Putar / Jeda Instrumental" title="Play / Pause">❚❚</button>
+    <button class="cl-audio-btn" id="clMuteBtn" aria-label="Bungkam / Bunyikan Instrumental" title="Mute / Unmute">🔊</button>
   </div>
 
   <!-- Kontainer Utama -->
@@ -887,7 +1146,7 @@
     <!-- ================= STAGE 5: VIDEO ================= -->
     <div class="stage" id="s5">
       <h2>Video Kecil Kita</h2>
-      <p>Sedikit rekaman momen kita yang selalu aku suka</p>
+      <p>Maaf yaa kalau videonya seadanya aja</p>
 
       <div class="vid-box">
         <video id="vid" playsinline></video>
@@ -1039,9 +1298,54 @@
 
       <!-- Pesan Penutup & Tombol Aksi -->
       <p id="msg8"></p>
+      <button class="btn btn-closure-enter" id="closureBtn" style="display: none; opacity: 0;">Ada Satu Hal Terakhir dari Aku 🕊️</button>
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; width: 100%;">
         <button class="btn btn-secondary" id="relightBtn" style="display: none; opacity: 0;">Nyalain Lilinnya Lagi 🕯️</button>
         <button class="btn btn-secondary" id="replayBtn" style="opacity: 0;">Ulang dari Awal ↺</button>
+      </div>
+    </div>
+
+    <!-- ================= STAGE 9: HALAMAN CLOSURE ================= -->
+    <div class="stage" id="s9">
+      <div class="closure-header">
+        <span class="closure-badge">Catatan Terakhir</span>
+        <h2 style="font-size: 1.75rem; color: #efe9e1; font-style: italic; margin-bottom: 6px;">Sebelum Benar-Benar Selesai</h2>
+        <p style="font-size: 0.88rem; color: #a89f96;">Dibaca pelan-pelan ya, Nopi...</p>
+        <div class="closure-scroll-hint">
+          <span>Scroll ke bawah ya</span>
+          <span>↓</span>
+        </div>
+      </div>
+
+      <!-- Bagian 1 -->
+      <article class="closure-section" data-closure-step="1">
+        <h3>"Sedikit jujur dari aku..."</h3>
+        <p>Semua yang ada di halaman halaman sebelumnya itu beneran tulus aku bikinin buat ngerayain hari ulang tahun kamu. Dan halaman ini aku buat setelah mantanmu datang kesini. Makasih banyak ya, udah pernah ngisi hari hari aku kemarin dengan cerita yang menyenangkan.</p>
+      </article>
+
+      <div class="closure-divider">✦ ✦ ✦</div>
+
+      <!-- Bagian 2 -->
+      <article class="closure-section" data-closure-step="2">
+        <p>Jujur, aku ngerti kok rasanya nggak enakan. Aku juga paham kamu ngerasa harus ngehargain usaha dia yang udah jauh jauh datang dari jakarta ke sini demi nemuin kamu. Aku coba ngertiin itu semua pakai logika.</p>
+        <p>Tapi ya... ngerti bukan berarti aku nggak punya batas. Capek juga rasanya kalau aku lagi berusaha jalan ke depan sama kamu, eh masa lalu malah ditarik lagi ke lingkaran kita.</p>
+      </article>
+
+      <div class="closure-divider">✦ ✦ ✦</div>
+
+      <!-- Bagian 3 (Penutup) -->
+      <article class="closure-section" data-closure-step="3">
+        <p>Soalnya buat aku, kalau emang mau mulai sesuatu yang baru, kita nggak bisa terus-terusan ketahan rasa sungkan atau nggak enakan sama cerita lama yang harusnya udah selesai.</p>
+        <p>Mungkin cerita kita sementara cukup sampai di sini aja. Aku milih buat mundur baik baik bukan karena aku kalah, tapi karena aku juga perlu ngehargain diriku sendiri.</p>
+        <p class="closure-quote-highlight">"Makasih banyak ya buat semuanya. Semoga kamu bahagia terus, dan sampai ketemu di versi terbaik kita masing-masing."</p>
+        <div class="closure-sign">
+          <span style="font-size: 0.82rem; font-family: 'Plus Jakarta Sans', sans-serif; font-style: normal; color: #9c938a;">Jaga diri baik-baik ya, Nopi</span>
+          <span>— Dito</span>
+        </div>
+      </article>
+
+      <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px;">
+        <button class="btn btn-secondary" id="closureBackBtn" style="font-size: 0.85rem; padding: 10px 22px; color: #d6c7b8; border-color: rgba(214, 199, 184, 0.2);">← Kembali ke Kue Ulang Tahun</button>
       </div>
     </div>
 
@@ -1080,6 +1384,13 @@
 
       // Video kenangan (taruh video.mp4 di folder yang sama)
       VIDEO_SRC: "video.mp4",
+
+      // Musik khusus Halaman Terakhir / Closure (taruh lagu4.mp3 di folder yang sama)
+      CLOSURE_TRACK: {
+        title: "Melodi Penutup",
+        src: "lagu4.mp3",
+        backup: ""
+      },
 
       // Daftar musik
       tracks: [
@@ -1164,7 +1475,7 @@
     const $ = id => document.getElementById(id);
     const pad = n => String(n).padStart(2, "0");
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const TOTAL = 8;
+    const TOTAL = 9;
     let cur = 1;
     let chosen = -1;
     let letterOpen = false;
@@ -1180,7 +1491,8 @@
       "5. Video Kenangan",
       "6. Pesan Hati",
       "7. Ucapan Spesial",
-      "8. Kue Ulang Tahun"
+      "8. Kue Ulang Tahun",
+      "9. Catatan Terakhir"
     ];
     const dots = $("dots");
     for (let i = 1; i <= TOTAL; i++) { 
@@ -1240,19 +1552,24 @@
         if (from) from.classList.remove("active");
         to.classList.add("active");
         cur = n; paintDots();
-        if (window.gsap && !reduce) gsap.fromTo(to.children, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .8, stagger: .09, ease: "power2.out", clearProps: "transform" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (window.gsap && !reduce && n !== 9) {
+          gsap.fromTo(to.children, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .8, stagger: .09, ease: "power2.out", clearProps: "transform" });
+        }
         onEnter(n);
       };
-      if (from && window.gsap && !reduce) gsap.to(from, { opacity: 0, duration: .35, onComplete: () => { gsap.set(from, { opacity: 1 }); show(); } });
+      if (from && window.gsap && !reduce) gsap.to(from, { opacity: 0, duration: .45, onComplete: () => { gsap.set(from, { opacity: 1 }); show(); } });
       else show();
-      if (n > 1) flyBird();
+      if (n > 1 && n < 9) flyBird();
     }
 
     function onEnter(n) {
       if (n !== 5) $("vid").pause();
+      if (n !== 9) leaveClosureStage();
       if (n === 5) initVideo();
       if (n === 6) startTypewriter();
       if (n === 8) initCakeStage();
+      if (n === 9) initClosureStage();
       if (n === 3) spawnFloaters();
     }
 
@@ -1566,6 +1883,7 @@
       const blowText = $("blowText");
       const wishPrompt = $("wishPrompt");
       const msg = $("msg8");
+      const closureBtn = $("closureBtn");
       const replayBtn = $("replayBtn");
       const relightBtn = $("relightBtn");
 
@@ -1583,6 +1901,12 @@
       if (msg) {
         msg.textContent = CONFIG.treeMessage;
         msg.style.opacity = "0";
+      }
+      if (closureBtn) {
+        closureBtn.style.display = "none";
+        closureBtn.style.opacity = "0";
+        closureBtn.style.pointerEvents = "none";
+        closureBtn.onclick = () => go(9);
       }
       if (replayBtn) {
         replayBtn.style.opacity = "0";
@@ -1626,6 +1950,7 @@
       const blowText = $("blowText");
       const wishPrompt = $("wishPrompt");
       const msg = $("msg8");
+      const closureBtn = $("closureBtn");
       const replayBtn = $("replayBtn");
       const relightBtn = $("relightBtn");
 
@@ -1651,20 +1976,27 @@
 
       if (window.gsap && !reduce) {
         gsap.to(msg, { opacity: 1, duration: 1.2, delay: 0.8 });
-        gsap.to([relightBtn, replayBtn], {
+        gsap.to([closureBtn, relightBtn, replayBtn], {
           opacity: 1,
           duration: 0.9,
           delay: 1.6,
           onStart: () => {
+            if (closureBtn) closureBtn.style.display = "inline-flex";
             if (relightBtn) relightBtn.style.display = "inline-flex";
           },
           onComplete: () => {
+            if (closureBtn) closureBtn.style.pointerEvents = "auto";
             if (replayBtn) replayBtn.style.pointerEvents = "auto";
             if (relightBtn) relightBtn.style.pointerEvents = "auto";
           }
         });
       } else {
         if (msg) msg.style.opacity = "1";
+        if (closureBtn) {
+          closureBtn.style.display = "inline-flex";
+          closureBtn.style.opacity = "1";
+          closureBtn.style.pointerEvents = "auto";
+        }
         if (relightBtn) {
           relightBtn.style.display = "inline-flex";
           relightBtn.style.opacity = "1";
@@ -1828,6 +2160,316 @@
       $("vid").currentTime = 0;
       go(1);
     };
+
+    /* ---------- TAHAP 9: HALAMAN CLOSURE (Scroll Storytelling & Custom MP3 / Instrumental Audio) ---------- */
+    let closureObserver = null;
+    const closureAudio = new Audio();
+    closureAudio.loop = true;
+    let useSynthFallback = false;
+    let clCtx = null;
+    let clMasterGain = null;
+    let clTimer = null;
+    let clPlaying = false;
+    let clMuted = false;
+    let clStep = 0;
+    let wasBirthdayAudioPlaying = false;
+    let bdayFadeTimer = null;
+    let clFadeTimer = null;
+
+    // Fungsi fade-out perlahan lagu ulang tahun saat masuk ke halaman 9
+    function fadeOutBirthdayAudio(durationMs = 1800, onDone) {
+      clearInterval(bdayFadeTimer);
+      if (audio.paused) {
+        audio.volume = 1;
+        if (onDone) onDone();
+        return;
+      }
+      const steps = 30;
+      const stepTime = durationMs / steps;
+      const startVol = audio.volume || 1;
+      let currentStep = 0;
+      bdayFadeTimer = setInterval(() => {
+        currentStep++;
+        const nextVol = Math.max(0, startVol * (1 - currentStep / steps));
+        audio.volume = nextVol;
+        if (currentStep >= steps || nextVol <= 0.01) {
+          clearInterval(bdayFadeTimer);
+          audio.pause();
+          audio.volume = 1; // Reset volume untuk nanti jika diputar ulang
+          if (onDone) onDone();
+        }
+      }, stepTime);
+    }
+
+    // Fungsi fade-in perlahan lagu ulang tahun jika kembali dari halaman 9 ke halaman sebelumnya
+    function fadeInBirthdayAudio(durationMs = 1400) {
+      clearInterval(bdayFadeTimer);
+      audio.volume = 0.02;
+      audio.play().catch(() => {});
+      const steps = 25;
+      const stepTime = durationMs / steps;
+      let currentStep = 0;
+      bdayFadeTimer = setInterval(() => {
+        currentStep++;
+        const nextVol = Math.min(1, currentStep / steps);
+        audio.volume = nextVol;
+        if (currentStep >= steps) {
+          clearInterval(bdayFadeTimer);
+          audio.volume = 1;
+        }
+      }, stepTime);
+    }
+
+    // Fungsi fade-in perlahan untuk lagu Closure (MP3)
+    function fadeInClosureMP3(durationMs = 2000) {
+      clearInterval(clFadeTimer);
+      closureAudio.volume = 0.02;
+      const steps = 30;
+      const stepTime = durationMs / steps;
+      let currentStep = 0;
+      clFadeTimer = setInterval(() => {
+        if (closureAudio.paused) {
+          clearInterval(clFadeTimer);
+          return;
+        }
+        currentStep++;
+        closureAudio.volume = Math.min(1, currentStep / steps);
+        if (currentStep >= steps) {
+          clearInterval(clFadeTimer);
+          closureAudio.volume = 1;
+        }
+      }, stepTime);
+    }
+
+    // Progresi kord piano & gitar akustik bernuansa bittersweet / reflektif (Am9 - Fmaj7 - Cmaj7 - G6 - Dm9 - Em7 - Fmaj7 - E7sus4)
+    const CLOSURE_CHORDS = [
+      { bass: 110.00, notes: [220.00, 261.63, 329.63, 392.00, 493.88], melody: [659.25, 587.33, 523.25, 493.88] }, // Am9
+      { bass: 87.31,  notes: [174.61, 220.00, 261.63, 329.63, 440.00], melody: [523.25, 493.88, 440.00, 392.00] }, // Fmaj7
+      { bass: 130.81, notes: [196.00, 261.63, 329.63, 392.00, 493.88], melody: [587.33, 523.25, 493.88, 392.00] }, // Cmaj7/G
+      { bass: 98.00,  notes: [196.00, 246.94, 293.66, 329.63, 440.00], melody: [493.88, 440.00, 392.00, 329.63] }, // G6
+      { bass: 146.83, notes: [220.00, 293.66, 349.23, 440.00, 523.25], melody: [587.33, 523.25, 440.00, 349.23] }, // Dm9
+      { bass: 82.41,  notes: [164.81, 246.94, 293.66, 392.00, 493.88], melody: [523.25, 493.88, 392.00, 329.63] }, // Em7
+      { bass: 87.31,  notes: [174.61, 220.00, 261.63, 329.63, 392.00], melody: [440.00, 392.00, 349.23, 329.63] }, // Fmaj9
+      { bass: 82.41,  notes: [164.81, 220.00, 246.94, 329.63, 392.00], melody: [440.00, 392.00, 329.63, 293.66] }  // Esus4 -> Em
+    ];
+
+    function playPianoNote(freq, startTime, duration, volume = 0.08, isBass = false) {
+      if (!clCtx || !clMasterGain) return;
+      const now = Math.max(clCtx.currentTime, startTime);
+
+      // Osilator utama (hangat menyerupai denting piano & petikan akustik lembut)
+      const osc1 = clCtx.createOscillator();
+      const osc2 = clCtx.createOscillator();
+      const filter = clCtx.createBiquadFilter();
+      const gain = clCtx.createGain();
+
+      osc1.type = isBass ? "sine" : "triangle";
+      osc2.type = "sine";
+      osc1.frequency.setValueAtTime(freq, now);
+      osc2.frequency.setValueAtTime(freq * 2, now); // Harmonik oktaf lembut
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(isBass ? 420 : 1350, now);
+      filter.frequency.exponentialRampToValueAtTime(isBass ? 180 : 480, now + duration * 0.85);
+
+      const g2 = clCtx.createGain();
+      g2.gain.setValueAtTime(0.18, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(volume, now + 0.035);
+      gain.gain.exponentialRampToValueAtTime(volume * 0.45, now + 0.35);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc1.connect(filter);
+      osc2.connect(g2);
+      g2.connect(filter);
+      filter.connect(gain);
+      gain.connect(clMasterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + duration + 0.05);
+      osc2.stop(now + duration + 0.05);
+    }
+
+    function scheduleClosureBar() {
+      if (!clPlaying || !clCtx) return;
+      const chord = CLOSURE_CHORDS[clStep % CLOSURE_CHORDS.length];
+      const t0 = clCtx.currentTime + 0.05;
+      const beat = 0.72; // Tempo tenang & reflektif
+
+      // Nada bass hangat di awal bar
+      playPianoNote(chord.bass, t0, beat * 4.2, 0.11, true);
+
+      // Petikan arpeggio akustik/piano perlahan
+      chord.notes.forEach((n, idx) => {
+        playPianoNote(n, t0 + idx * (beat * 0.5), beat * 3.4, 0.055, false);
+      });
+
+      // Melodi utama bittersweet di atas kord
+      chord.melody.forEach((m, idx) => {
+        if (idx === 0 || Math.random() > 0.2) {
+          playPianoNote(m, t0 + (idx + 0.5) * beat, beat * 2.2, 0.065, false);
+        }
+      });
+
+      clStep++;
+      clTimer = setTimeout(scheduleClosureBar, beat * 4 * 1000);
+    }
+
+    function startSynthFallback() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!clCtx) {
+          clCtx = new AudioCtx();
+          clMasterGain = clCtx.createGain();
+          clMasterGain.gain.setValueAtTime(0.0001, clCtx.currentTime);
+          clMasterGain.connect(clCtx.destination);
+        }
+        if (clCtx.state === "suspended") clCtx.resume();
+        if (!clMuted) {
+          clMasterGain.gain.setValueAtTime(Math.max(0.0001, clMasterGain.gain.value || 0.0001), clCtx.currentTime);
+          clMasterGain.gain.linearRampToValueAtTime(0.85, clCtx.currentTime + 1.8);
+        }
+        clPlaying = true;
+        clearTimeout(clTimer);
+        scheduleClosureBar();
+        syncClosureAudioUI();
+      } catch (err) {}
+    }
+
+    function startClosureAudio(withFadeIn = false) {
+      const cfg = CONFIG.CLOSURE_TRACK || { src: "lagu4.mp3", title: "Melodi Penutup" };
+      if (!useSynthFallback && cfg.src) {
+        if (!closureAudio.getAttribute("src")) {
+          closureAudio.src = cfg.src;
+        }
+        closureAudio.muted = clMuted;
+        closureAudio.onerror = () => {
+          if (!closureAudio.dataset.retried && cfg.backup) {
+            closureAudio.dataset.retried = "1";
+            closureAudio.src = cfg.backup;
+            closureAudio.play().catch(() => {});
+            return;
+          }
+          // Jika lagu4.mp3 belum dimasukkan ke folder, otomatis gunakan instrumental bawaan
+          useSynthFallback = true;
+          if (cur === 9) startSynthFallback();
+        };
+        closureAudio.onplay = () => { clPlaying = true; syncClosureAudioUI(); };
+        closureAudio.onpause = () => { if (!useSynthFallback) { clPlaying = false; syncClosureAudioUI(); } };
+        clPlaying = true;
+        syncClosureAudioUI();
+        if (withFadeIn) closureAudio.volume = 0.02;
+        else closureAudio.volume = 1;
+        closureAudio.play().then(() => {
+          if (withFadeIn) fadeInClosureMP3(2000);
+        }).catch(() => {
+          clPlaying = false;
+          syncClosureAudioUI();
+        });
+        return;
+      }
+      startSynthFallback();
+    }
+
+    function pauseClosureAudio() {
+      clPlaying = false;
+      clearTimeout(clTimer);
+      clearInterval(clFadeTimer);
+      if (!closureAudio.paused) closureAudio.pause();
+      syncClosureAudioUI();
+    }
+
+    function toggleClosurePlay() {
+      if (clPlaying) pauseClosureAudio();
+      else startClosureAudio();
+    }
+
+    function toggleClosureMute() {
+      clMuted = !clMuted;
+      closureAudio.muted = clMuted;
+      if (clCtx && clMasterGain) {
+        clMasterGain.gain.setTargetAtTime(clMuted ? 0.0001 : 0.85, clCtx.currentTime, 0.08);
+      }
+      syncClosureAudioUI();
+    }
+
+    function syncClosureAudioUI() {
+      const ctrl = $("closureAudioCtrl");
+      const playBtn = $("clPlayBtn");
+      const muteBtn = $("clMuteBtn");
+      const label = $("clAudioLabel");
+      const cfgTitle = (CONFIG.CLOSURE_TRACK && CONFIG.CLOSURE_TRACK.title) ? CONFIG.CLOSURE_TRACK.title : "Instrumental";
+      if (ctrl) ctrl.classList.toggle("playing", clPlaying && !clMuted);
+      if (playBtn) playBtn.textContent = clPlaying ? "❚❚" : "▶";
+      if (muteBtn) muteBtn.textContent = clMuted ? "🔇" : "🔊";
+      if (label) label.textContent = clPlaying ? (clMuted ? "Dibungkam" : cfgTitle) : "Dijeda";
+    }
+
+    if ($("clPlayBtn")) $("clPlayBtn").onclick = (e) => { e.stopPropagation(); toggleClosurePlay(); };
+    if ($("clMuteBtn")) $("clMuteBtn").onclick = (e) => { e.stopPropagation(); toggleClosureMute(); };
+    if ($("closureBackBtn")) $("closureBackBtn").onclick = () => go(8);
+
+    function initClosureStage() {
+      // Simpan status lagu ulang tahun sebelumnya lalu kecilkan suaranya perlahan (fade-out) sampai mati
+      wasBirthdayAudioPlaying = !audio.paused;
+      clStep = 0;
+
+      // Aktifkan nuansa tenang & minimalis Halaman Closure
+      document.body.classList.add("closure-mode");
+
+      // Animasi masuk header Closure
+      const header = document.querySelector("#s9 .closure-header");
+      if (header && window.gsap && !reduce) {
+        gsap.fromTo(header, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power2.out" });
+      }
+
+      // Reset & pasang Scroll Storytelling (IntersectionObserver) untuk Bagian 1, 2, dan 3
+      const sections = document.querySelectorAll("#s9 .closure-section");
+      sections.forEach(sec => sec.classList.remove("visible"));
+
+      if (closureObserver) closureObserver.disconnect();
+      closureObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      }, {
+        root: null,
+        threshold: 0.18,
+        rootMargin: "0px 0px -40px 0px"
+      });
+
+      sections.forEach((sec, idx) => {
+        // Bagian 1 tampil perlahan sesaat setelah halaman terbuka, Bagian 2 & 3 saat di-scroll
+        if (idx === 0) {
+          setTimeout(() => sec.classList.add("visible"), 350);
+        }
+        closureObserver.observe(sec);
+      });
+
+      // Kecilkan lagu ulang tahun perlahan (1.8 detik), lalu mulai lagu halaman terakhir secara halus (fade-in)
+      if (wasBirthdayAudioPlaying) {
+        fadeOutBirthdayAudio(1800, () => {
+          if (cur === 9) startClosureAudio(true);
+        });
+      } else {
+        startClosureAudio(true);
+      }
+    }
+
+    function leaveClosureStage() {
+      if (!document.body.classList.contains("closure-mode")) return;
+      document.body.classList.remove("closure-mode");
+      clearInterval(bdayFadeTimer);
+      pauseClosureAudio();
+      if (closureObserver) closureObserver.disconnect();
+      if (wasBirthdayAudioPlaying && audio.src) {
+        fadeInBirthdayAudio(1400);
+      }
+    }
 
     paintDots();
   </script>
