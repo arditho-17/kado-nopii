@@ -1847,13 +1847,15 @@
 
       <div class="note-card">
         <h3>"Sedikit Catatan Kecil..."</h3>
-        <p>Sekali lagi selamat ulang tahun ya, Nopi. Semua yang ada di web ini beneran tulus aku bikinin buat ngerayain hari spesial kamu.</p>
-        <p>Kemarin kamu sempat cerita kalau kamu pengen bener-bener lupain masa lalu, nutup cerita yang udah lewat, dan fokus perbaikin diri buat ke depannya. Jujur pas denger itu, aku seneng dan ngehargain banget keputusan kamu.</p>
-        <p>Sekarang kamu fokus aja sama diri kamu sendiri dan kejar semua apa yang lagi kamu pengenin ya. Apapun langkah yang lagi kamu ambil buat jadi lebih baik, aku di sini bakal selalu dukung kamu.</p>
-        <p class="note-closing">Semoga semua yang lagi kamu usahain dilancarin terus. Semangat terus ya, Nopi! ✨</p>
+        <p>Sekali lagi selamat ulang tahun yang ke 23 ya Nopi. Semua yang ada di web ini beneran tulus aku bikinin buat ngerayain hari spesial kamu. Semoga kamu suka ya pas buka semuanya dari awal sampai halaman terakhir ini.</p>
+        <p>Kemarin kamu sempat cerita kalau kamu pengen bener bener lupain masa lalu, nutup cerita lama yang udah lewat, dan mau fokus perbaikin diri buat ke depannya. Jujur pas denger kamu cerita gitu, aku ikutan lega, seneng, dan ngehargain banget keputusan kamu. Pasti nggak gampang buat nyampe di titik itu, tapi kamu keren banget udah berani milih buat jalan ke depan.</p>
+        <p>Jalanin semuanya pelan pelan aja ya, nggak usah buru buru. Kalau nanti ada hari hari yang rasanya lagi capek atau berat, istirahat dulu bentar, jangan terlalu keras sama diri kamu sendiri. Kamu udah hebat banget bisa ngelewatin semuanya sampai sekarang.</p>
+        <p>Sekarang kamu fokus aja sama diri kamu sendiri dan kejar satu satu semua yang lagi kamu pengenin. Apapun yang lagi kamu usahain buat ke depannya, aku di sini bakal selalu ada buat dukung kamu.</p>
+        <p>Sambil dengerin lagu di halaman ini, sebenernya ada sedikit harapan kecil dari aku. Aku nggak mau ganggu fokus kamu sekarang, tapi kalau nanti kamu udah selesai berdamai sama semuanya dan siap mulai cerita baru, izinin aku ya yang ngisi cerita baru itu bareng kamu.</p>
+        <p class="note-closing">Semoga di umur yang baru ini hati kamu selalu tenang dan semua urusan kamu dilancarin terus. Semangat terus ya Nopi! ✨</p>
         <div class="note-sign">
           <span style="font-size: 0.82rem; font-family: 'Plus Jakarta Sans', sans-serif; font-style: normal; color: rgba(255, 246, 230, 0.65);">Selalu dukung kamu</span>
-          <span>— Dito ♥</span>
+          <span>Dito ♥</span>
         </div>
       </div>
 
@@ -1919,6 +1921,13 @@
           backup: "C:/Users/user/.gemini/antigravity/brain/045f8045-1cc8-4195-bcfb-572e153ffdc2/.user_uploaded/uploaded_media_1791955044132.mp3"
         }
       ],
+
+      // Lagu khusus yang otomatis berputar (autoplay) saat masuk Halaman 9 ("Sebuah Catatan Kecil...")
+      noteSong: {
+        title: "Yovie Tulus Glenn - Adu Rayu",
+        src: "lagu4.mp3",
+        backup: "C:/Users/user/.gemini/antigravity/brain/744ff512-283d-412b-b6fe-47d74dba4ecb/.user_uploaded/uploaded_media_1793630019053.mp3"
+      },
 
       // Surat cinta dari Dito
       letter: {
@@ -2069,12 +2078,90 @@
       if (n > 1) flyBird();
     }
 
+    let playingNoteSong = false;
+    let audioFadeTimer = null;
+
+    function fadeAudioVolume(fromVol, toVol, durationMs, onComplete) {
+      if (audioFadeTimer) clearInterval(audioFadeTimer);
+      const steps = 25;
+      const stepTime = Math.max(20, Math.floor(durationMs / steps));
+      let currentStep = 0;
+      try { audio.volume = Math.max(0, Math.min(1, fromVol)); } catch (e) {}
+
+      audioFadeTimer = setInterval(() => {
+        currentStep++;
+        const progress = currentStep / steps;
+        const nextVol = fromVol + (toVol - fromVol) * progress;
+        try { audio.volume = Math.max(0, Math.min(1, nextVol)); } catch (e) {}
+        if (currentStep >= steps) {
+          clearInterval(audioFadeTimer);
+          audioFadeTimer = null;
+          try { audio.volume = Math.max(0, Math.min(1, toVol)); } catch (e) {}
+          if (onComplete) onComplete();
+        }
+      }, stepTime);
+    }
+
+    function startNoteSongWithFadeIn() {
+      playingNoteSong = true;
+      delete audio.dataset.retried;
+      audio.src = CONFIG.noteSong.src;
+      audio.onerror = () => {
+        if (!audio.dataset.retried && CONFIG.noteSong.backup) {
+          audio.dataset.retried = "1";
+          audio.src = CONFIG.noteSong.backup;
+          try { audio.volume = 0; } catch (e) {}
+          audio.play().then(() => fadeAudioVolume(0, 1, 1600)).catch(() => {});
+        }
+      };
+      audio.currentTime = 0;
+      try { audio.volume = 0; } catch (e) {}
+      audio.play().then(() => {
+        fadeAudioVolume(0, 1, 1600);
+      }).catch(() => {
+        try { audio.volume = 1; } catch (e) {}
+      });
+      syncPlay();
+    }
+
     function onEnter(n) {
       if (n !== 5) $("vid").pause();
       if (n === 5) initVideo();
       if (n === 6) startTypewriter();
       if (n === 8) initCakeStage();
       if (n === 3) spawnFloaters();
+      if (n === 9 && CONFIG.noteSong && CONFIG.noteSong.src) {
+        if (!audio.paused && audio.src) {
+          // Matikan lagu sebelumnya pelan-pelan (fade-out), lalu nyalakan lagu Halaman 9 pelan-pelan (fade-in)
+          fadeAudioVolume(audio.volume || 1, 0, 1000, () => {
+            audio.pause();
+            if (cur === 9) startNoteSongWithFadeIn();
+          });
+        } else {
+          startNoteSongWithFadeIn();
+        }
+      } else if (n !== 9 && playingNoteSong) {
+        playingNoteSong = false;
+        if (!audio.paused && audio.src) {
+          fadeAudioVolume(audio.volume || 1, 0, 800, () => {
+            audio.pause();
+            if (chosen >= 0 && cur !== 9) {
+              setTrack(chosen, cur !== 5, true);
+            } else {
+              audio.removeAttribute("src");
+              try { audio.volume = 1; } catch (e) {}
+              syncPlay();
+            }
+          });
+        } else if (chosen >= 0) {
+          setTrack(chosen, n !== 5, true);
+        } else {
+          audio.pause();
+          audio.removeAttribute("src");
+          try { audio.volume = 1; } catch (e) {}
+          syncPlay();
+        }
+      }
     }
 
     /* ---------- Bintang Latar Belakang & Bintang Jatuh (Shooting Stars) ---------- */
@@ -2201,7 +2288,12 @@
     };
 
     /* ---------- Pemutar Musik (Stage 2) ---------- */
-    function setTrack(i, play = true) {
+    function setTrack(i, play = true, fadeIn = false) {
+      if (audioFadeTimer) {
+        clearInterval(audioFadeTimer);
+        audioFadeTimer = null;
+      }
+      playingNoteSong = false;
       chosen = i;
       const t = CONFIG.tracks[i];
       [...$("tracks").children].forEach((b, k) => b.classList.toggle("on", k === i));
@@ -2209,15 +2301,34 @@
       $("mp").classList.add("show");
       $("hint").textContent = "Lagunya udah nyala ♫ Yuk klik tombol lanjut di bawah";
       if (t.src) { 
+        delete audio.dataset.retried;
         audio.src = t.src; 
         audio.onerror = () => {
           if (!audio.dataset.retried && t.backup) {
             audio.dataset.retried = "1";
             audio.src = t.backup;
-            if (play) audio.play().catch(() => {});
+            if (play) {
+              if (fadeIn) {
+                try { audio.volume = 0; } catch (e) {}
+                audio.play().then(() => fadeAudioVolume(0, 1, 1200)).catch(() => {});
+              } else {
+                try { audio.volume = 1; } catch (e) {}
+                audio.play().catch(() => {});
+              }
+            }
           }
         };
-        if (play) audio.play().catch(() => {}); 
+        if (play) {
+          if (fadeIn) {
+            try { audio.volume = 0; } catch (e) {}
+            audio.play().then(() => fadeAudioVolume(0, 1, 1200)).catch(() => {
+              try { audio.volume = 1; } catch (e) {}
+            });
+          } else {
+            try { audio.volume = 1; } catch (e) {}
+            audio.play().catch(() => {});
+          }
+        }
       } else {
         audio.removeAttribute("src");
       }
@@ -2233,7 +2344,9 @@
       if ($("floatMusicBtn")) $("floatMusicBtn").textContent = on ? "❚❚" : "▶";
       if ($("floatMusic")) $("floatMusic").classList.toggle("playing", on);
       if ($("floatMusicTitle")) {
-        const curTitle = chosen >= 0 ? CONFIG.tracks[chosen].title : "Putar Musik ♫";
+        const curTitle = playingNoteSong && CONFIG.noteSong
+          ? CONFIG.noteSong.title
+          : (chosen >= 0 ? CONFIG.tracks[chosen].title : "Putar Musik ♫");
         $("floatMusicTitle").textContent = curTitle;
       }
     }
